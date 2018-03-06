@@ -1,3 +1,9 @@
+import java.util.Random;
+/**
+*   Character class, that store all the information of the character
+*@author tnguyen452
+*@version 1.0
+*/
 public abstract class Character {
     private String name;
     private int level;
@@ -8,88 +14,190 @@ public abstract class Character {
     private int health;
     private boolean isDead = false;
 
+    /**
+    *   Character constructor
+    *@param name That take in the String store name of character
+    *@param seed That take in an int value of seed
+    *
+    */
     public Character(String name, int seed) {
-        //implement this constructor using constructor delegation
+        this.name = name;
+        setLevel(1);
+        setHealth(5);
+        Random rand = new Random();
+        setStrength(rand.nextInt(6) + 1);
+        setDexterity(rand.nextInt(6) + 1);
+        setIntelligence(rand.nextInt(6) + 1);
+        setWisdom(rand.nextInt(6) + 1);
     }
 
+    /**
+    *   Character constructor
+    *@param name That take in the String store name of character
+    *@param level That take in an int value of level
+    *@param strength That take in an int value of strength
+    *@param dexterity That take in an int value of dexterity
+    *@param intelligence That take in an int value of intelligence
+    *@param wisdom That take in an int value of wisdom
+    *
+    */
     public Character(String name, int level,
                      int strength, int dexterity,
                      int intelligence, int wisdom) {
-        //implement this constructor
+        this.name = name;
+        this.level = level;
+        this.strength = strength;
+        this.dexterity = dexterity;
+        this.intelligence = intelligence;
+        this.wisdom = wisdom;
+        setHealth(this.level * 5);
+        if (health < 0) {
+            setIsDead(true);
+            setHealth(0);
+        }
     }
 
+    /**
+    *   Getter method for name
+    *@return Return the name of the Character
+    */
     public String getName() {
-        //implement this method
-        return null;
+        return name;
     }
 
+    /**
+    *   Getter method for level
+    *@return Return the level of the character
+    */
     public int getLevel() {
-        //implement this method
-        return 0;
+        return level;
     }
 
+    /**
+    *   Setter method for level
+    *@param level  Take in the level
+    */
     public void setLevel(int level) {
-        //implement this method
+        this.level = level;
     }
 
+    /**
+    *   Getter method for strength
+    *@return Return the strength of the character
+    */
     public int getStrength() {
-        //implement this method
-        return 0;
+        return strength;
     }
 
+    /**
+    *   Setter method for strength
+    *@param strength  Take in the strength
+    */
     public void setStrength(int strength) {
-        //implement this method
+        this.strength = strength;
     }
 
+    /**
+    *   Getter method for Dexterity
+    *@return Return the dexterity of the Character
+    */
     public int getDexterity() {
-        //implement this method
-        return 0;
+        return dexterity;
     }
 
+    /**
+    *   Setter method for dexterity
+    *@param dexterity  Take in the dexterity
+    */
     public void setDexterity(int dexterity) {
-        //implement this method
+        this.dexterity = dexterity;
     }
 
+    /**
+    *   Getter method for Intelligence
+    *@return Return the intelligence of the character
+    */
     public int getIntelligence() {
-        //implement this method
-        return 0;
+        return intelligence;
     }
 
+    /**
+    *   Setter method for intelligence
+    *@param intelligence  Take in the intelligence
+    */
     public void setIntelligence(int intelligence) {
-        //implement this method
+        this.intelligence = intelligence;
     }
 
+    /**
+    *   Getter method for wisdom
+    *@return Return the wisdom of the character
+    */
     public int getWisdom() {
-        //implement this method
-        return 0;
+        return wisdom;
     }
 
+    /**
+    *   Setter method for wisdom
+    *@param wisdom  Take in the wisdom
+    */
     public void setWisdom(int wisdom) {
-        //implement this method
+        this.wisdom = wisdom;
     }
 
+    /**
+    *   Getter method for health
+    *@return Return the health of the Character
+    */
     public int getHealth() {
-        //implement this method
-        return 0;
+        return health;
     }
 
+    /**
+    *   Setter method for health
+    *@param health  Take in the health
+    */
     public void setHealth(int health) {
-        //implement this method
+        this.health = health;
     }
 
+    /**
+    *   Getter method for isDead
+    *@return Return to determine if the character dead or not
+    */
     public boolean getIsDead() {
-        //implement this method
-        return false;
+        return isDead;
     }
 
+    /**
+    *   Setter method for isDead
+    *@param isDead  Take in the isDead
+    */
     public void setIsDead(boolean isDead) {
-        //implement this method
+        if (health < 0) {
+            this.isDead = true;
+            setHealth(0);
+        } else {
+            this.isDead = false;
+        }
     }
 
+    /**
+    *Abstract method name levelUp() of Character class
+    *
+    */
     public abstract void levelUp();
 
+    /**
+    *Abstract method name attack() of Character class
+    *@param c Take in the character
+    */
     public abstract void attack(Character c);
 
+    /**
+    *Abstract method name toString() of Character class
+    *@return Return the String back
+    */
     public abstract String toString();
 
 }
