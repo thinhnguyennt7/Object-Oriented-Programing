@@ -5,8 +5,6 @@
 *@version 1.0
 */
 public class Cleric extends Character {
-    private int wisdom;
-    private Character c;
 
     /**
     *The fighter constructor take in two parameter, corresponding with each of
@@ -34,41 +32,45 @@ public class Cleric extends Character {
     }
 
     @Override
-    public void attack(Character character) {
-        character.setHealth((character.getHealth() - 6) + wisdom);
-        if (character.getIsDead()) {
+    public void attack(Character c) {
+        if (c.getIsDead()) {
             System.out.println("Cannot attack a dead character");
+        } else {
+            c.setHealth(c.getHealth() - (6 + c.getWisdom()));
         }
     }
 
     @Override
     public void levelUp() {
-        c.setLevel(c.getLevel() + 1);
-        c.setHealth(5 * c.getLevel());
-        c.setWisdom(c.getWisdom() + 2);
-        c.setStrength(c.getStrength() + 1);
-        c.setIntelligence(c.getIntelligence() + 1);
-        c.setDexterity(c.getDexterity() + 1);
+        super.setLevel(super.getLevel() + 1);
+        super.setHealth(5 * super.getLevel());
+        super.setWisdom(super.getWisdom() + 2);
+        super.setStrength(super.getStrength() + 1);
+        super.setIntelligence(super.getIntelligence() + 1);
+        super.setDexterity(super.getDexterity() + 1);
     }
 
     /**
     *The heal method for the Cleric class
     *
-    *@param character Take in the character
+    *@param c Take in the character
     */
-    public void heal(Character character) {
-        character.setHealth((character.getHealth() + 6) + wisdom);
-        if (character.getIsDead()) {
+    public void heal(Character c) {
+        if (c.getIsDead()) {
             System.out.println("Cannot heal a dead character");
+        } else {
+            if ((c.getHealth() + (6 + c.getWisdom())) < (5 * c.getHealth())) {
+                c.setHealth(c.getHealth() + (6 + c.getWisdom()));
+            }
         }
     }
 
     @Override
     public String toString() {
-        return "Level (" + c.getLevel() + ") cleric named (" + c.getName()
-            + ") with (" + c.getStrength() + ") strength, (" + c.getDexterity()
-            + ") dexterity, (" + c.getIntelligence() + ") intelligence, and ("
-            + c.getWisdom() + ") wisdom.";
+        return "Level " + super.getLevel() + " cleric named " + super.getName()
+                + " with " + super.getStrength() + " strength, "
+                + super.getDexterity() + " dexterity, "
+                + super.getIntelligence() + " intelligence, and "
+                + super.getWisdom() + " wisdom.";
     }
-
 }

@@ -12,7 +12,7 @@ public abstract class Character {
     private int intelligence;
     private int wisdom;
     private int health;
-    private boolean isDead = false;
+    private boolean isDead;
 
     /**
     *   Character constructor
@@ -24,7 +24,7 @@ public abstract class Character {
         this.name = name;
         setLevel(1);
         setHealth(5);
-        Random rand = new Random();
+        Random rand = new Random(seed);
         setStrength(rand.nextInt(6) + 1);
         setDexterity(rand.nextInt(6) + 1);
         setIntelligence(rand.nextInt(6) + 1);
@@ -51,7 +51,7 @@ public abstract class Character {
         this.intelligence = intelligence;
         this.wisdom = wisdom;
         setHealth(this.level * 5);
-        if (health < 0) {
+        if (health <= 0) {
             setIsDead(true);
             setHealth(0);
         }
@@ -174,12 +174,7 @@ public abstract class Character {
     *@param isDead  Take in the isDead
     */
     public void setIsDead(boolean isDead) {
-        if (health < 0) {
-            this.isDead = true;
-            setHealth(0);
-        } else {
-            this.isDead = false;
-        }
+        this.isDead = isDead;
     }
 
     /**

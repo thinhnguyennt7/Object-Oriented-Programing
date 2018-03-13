@@ -5,8 +5,6 @@
 *@version 1.0
 */
 public class Rogue extends Character {
-    private int dexterity;
-    private Character c;
 
     /**
     *The fighter constructor take in two parameter, corresponding with each of
@@ -34,28 +32,30 @@ public class Rogue extends Character {
     }
 
     @Override
-    public void attack(Character character) {
-        character.setHealth((character.getHealth() - 6) + dexterity);
-        if (character.getIsDead()) {
+    public void attack(Character c) {
+        if (c.getIsDead()) {
             System.out.println("Cannot attack a dead character");
+        } else {
+            c.setHealth(c.getHealth() - (6 + c.getDexterity()));
         }
     }
 
     @Override
     public void levelUp() {
-        c.setLevel(c.getLevel() + 1);
-        c.setHealth(5 * c.getLevel());
-        c.setDexterity(c.getDexterity() + 3);
-        c.setIntelligence(c.getIntelligence() + 2);
-        c.setWisdom(c.getWisdom() + 2);
-        c.setStrength(c.getStrength() + 2);
+        super.setLevel(super.getLevel() + 1);
+        super.setHealth(5 * super.getLevel());
+        super.setDexterity(super.getDexterity() + 3);
+        super.setIntelligence(super.getIntelligence() + 2);
+        super.setWisdom(super.getWisdom() + 2);
+        super.setStrength(super.getStrength() + 2);
     }
 
     @Override
     public String toString() {
-        return "Level (" + c.getLevel() + ") rogue named (" + c.getName()
-            + ") with + (" + c.getStrength() + ") strength, ("
-            + c.getDexterity() + ") dexterity, + (" + c.getIntelligence()
-            + ") intelligence, and (" + c.getWisdom() + ") wisdom.";
+        return "Level " + super.getLevel() + " rogue named " + super.getName()
+                + " with " + super.getStrength() + " strength, "
+                + super.getDexterity() + " dexterity, "
+                + super.getIntelligence() + " intelligence, and "
+                + super.getWisdom() + " wisdom.";
     }
 }

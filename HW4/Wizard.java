@@ -5,15 +5,13 @@
 *@version 1.0
 */
 public class Wizard extends Character {
-    private Character c;
-    private int intelligence;
-
     /**
     *The fighter constructor take in two parameter, corresponding with each of
     *the constructors of the superclass
     *@param name Take in the name of the fighter
     *@param seed Take in the number of seed
-    */gitString name, int seed) {
+    */
+    public Wizard(String name, int seed) {
         super(name, seed);
     }
 
@@ -33,45 +31,46 @@ public class Wizard extends Character {
     }
 
     @Override
-    public void attack(Character character) {
-        character.setHealth((character.getHealth() - 4) + intelligence);
-        if (character.getIsDead()) {
+    public void attack(Character c) {
+        if (c.getIsDead()) {
             System.out.println("Cannot attack a dead character");
+        } else {
+            c.setHealth(c.getHealth() - (4 + c.getIntelligence()));
         }
     }
 
     @Override
     public void levelUp() {
-        c.setLevel(c.getLevel() + 1);
-        c.setHealth(5 * c.getLevel());
-        c.setIntelligence(c.getIntelligence() + 2);
-        c.setWisdom(c.getWisdom() + 1);
-        c.setStrength(c.getStrength() + 1);
-        c.setDexterity(c.getDexterity() + 1);
+        super.setLevel(super.getLevel() + 1);
+        super.setHealth(5 * super.getLevel());
+        super.setIntelligence(super.getIntelligence() + 2);
+        super.setWisdom(super.getWisdom() + 1);
+        super.setStrength(super.getStrength() + 1);
+        super.setDexterity(super.getDexterity() + 1);
     }
 
     /**
     *The multiAttack method of the Wizard class
     *
-    *@param character Take in a character
+    *@param c Take in an array of characters
     *
     */
-    public void multiAttack(Character character) {
-
-        // Implement this one
-		// for(Character newChar : character) {
-        //           newChar =
-        //       }
-        if (c.getIsDead()) {
-            System.out.println("Cannot damage a dead character");
+    public void multiAttack(Character ... c) {
+        for (Character cha : c) {
+            if (cha.getIsDead()) {
+                System.out.println("Cannot damage a dead character");
+            } else {
+                cha.setHealth(cha.getHealth() - (2 + cha.getIntelligence()));
+            }
         }
     }
 
     @Override
     public String toString() {
-        return "Level (" + c.getLevel() + ") wizard named (" + c.getName()
-            + ") with (" + c.getStrength() + ") strength, (" + c.getDexterity()
-            + ") dexterity, (" + c.getIntelligence() + ") intelligence, and ("
-            + c.getWisdom() + ") wisdom.";
+        return "Level " + super.getLevel() + " wizard named " + super.getName()
+                + " with " + super.getStrength() + " strength, "
+                + super.getDexterity() + " dexterity, "
+                + super.getIntelligence() + " intelligence, and "
+                + super.getWisdom() + " wisdom.";
     }
 }
