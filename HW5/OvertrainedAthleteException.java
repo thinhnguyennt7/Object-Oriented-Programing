@@ -5,7 +5,7 @@
 * @author Thinh Nguyen
 * @version 1.0
 */
-public class OvertrainedAthleteException extends Exception {
+public class OvertrainedAthleteException extends RuntimeException {
 
     /**
     * Constructor that will invoke the Exception constructor

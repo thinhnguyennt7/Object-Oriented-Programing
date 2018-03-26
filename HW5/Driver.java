@@ -25,9 +25,11 @@ public class Driver {
         Athlete khoa = new Athlete("Khoa", 10, 7);
         Athlete duc = new Athlete("Duc", 10, 7);
 
-        Athlete<Object> test = new Athlete<Object>();
+        // System.out.println(thinh);
 
-        // Add players to Athlete list
+        AthleteList<Athlete> test = new AthleteList<Athlete>();
+
+        // // Add players to AthleteList list
         test.add(thinh);
         test.add(nina);
         test.add(tuan);
@@ -41,24 +43,32 @@ public class Driver {
         test.add(khoa);
         test.add(duc);
 
+        // System.out.println(test.size());
+        for (int i = 0; i < test.asArray().length; i++) {
+            System.out.println(test.get(i));
+        }
+
+
         // test.train(0); // Test train() method
         // System.out.println(test.get(0)); // Print out after train()
 
         // test.rest(0); // Test rest() method
         // System.out.println(test.get(0)); // Print out after test()
 
-        // Athlete player = test.get(10);
+        // AthleteList player = test.get(10);
         // System.out.println(player);
 
-        Athlete player1 = test.remove(10);
-        System.out.println(player1);
-        System.out.println(test.size());
+        
+        
+        // AthleteList player1 = test.remove(10);
+        // System.out.println(player1);
+        // System.out.println(test.size());
         // test.remove(7);//Check remove method
         // test.clear();//check clear method
         // test.add(thinh);//Add new player. after clear
         // System.out.println(test.isEmpty()); // Test isEmpty() method
 
-        // Athlete[] b = test.asArray(); // check method asArray()
+        // AthleteList[] b = test.asArray(); // check method asArray()
         // for (int i = 0; i < b.length; i++) {
         //     System.out.println(b[i]);
         // }
