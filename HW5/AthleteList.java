@@ -145,7 +145,7 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
     *greater than or equal to the number of elements in the AthleteList.
     */
     private void checkIndex(int index) throws IndexOutOfBoundsException {
-        if (index < 0 || index >= backingArray.length) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index out of bound");
         }
     }
