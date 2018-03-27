@@ -68,9 +68,6 @@ public class Athlete {
         }
         energy -= strength;
         strength++;
-        if (energy < 0) {
-            throw new OvertrainedAthleteException("Energy < 0");
-        }
     }
 
     /**
