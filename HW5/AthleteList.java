@@ -18,7 +18,6 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
     }
 
     @Override
-    // @SuppressWarnings("unchecked")
     public void add(T t) {
         if (t == null) {
             throw new IllegalArgumentException("Athlete cannot be null");
@@ -37,7 +36,6 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
     }
 
     @Override
-    // @SuppressWarnings("unchecked")
     public T remove(int index) {
         checkIndex(index);
         T value = (T)backingArray[index];
@@ -78,25 +76,12 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
 
     @Override
     public int size() {
-        int count = 0;
-        for (int i = 0; i < backingArray.length; i++) {
-            if (backingArray[i] != null) {
-                count++;
-            }
-        }
-        return count;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        int count = 0;
-        for (int i = 0; i < backingArray.length; i++) {
-            if (backingArray[i] != null) {
-                count++;
-                return false;
-            }
-        }
-        return true;
+        return size == 0;
     }
 
     @Override
@@ -113,7 +98,6 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
         athle.rest();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public T[] asArray() {
         int count = 0;
