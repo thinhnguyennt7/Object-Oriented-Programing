@@ -59,7 +59,7 @@ public class Athlete {
      * value of the old strength. You need to fix this method to disallow
      * overtraining of an Athlete as such: if energy < strength,
      * throw an OvertrainedAthleteException.
-     *@throws OvertrainedAthleteException Throw error message when the energy
+     * @throws OvertrainedAthleteException Throw exception
      *less then the strength or the energy is negative value.
      */
     public void train() {
