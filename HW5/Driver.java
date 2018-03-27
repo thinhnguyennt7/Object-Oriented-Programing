@@ -12,7 +12,7 @@ public class Driver {
     *
     */
     public static void main(String[] args) {
-        Athlete thinh = new Athlete("Thinh", 6, 6);
+        Athlete thinh = new Athlete("Thinh", 7, 7);
         Athlete nina = new Athlete("Nina", 15, 4);
         Athlete tuan = new Athlete("Tuan", 12, 3);
         Athlete vinh = new Athlete("Vinh", 11, 2);
@@ -43,42 +43,45 @@ public class Driver {
         test.add(khoa);
         test.add(duc);
 
-        // System.out.println(test.size());
+        // Test remove method
+        // System.out.println(test.remove(0));
+        System.out.println("Break");
+
+        // Test asarray method
         for (int i = 0; i < test.asArray().length; i++) {
             System.out.println(test.get(i));
         }
 
+        // Test size() method
+        System.out.println(test.size());
 
-        // test.train(0); // Test train() method
-        // System.out.println(test.get(0)); // Print out after train()
+        System.out.println("Break");
 
-        // test.rest(0); // Test rest() method
-        // System.out.println(test.get(0)); // Print out after test()
+        // Test the get method
+        System.out.println(test.get(0));
 
-        // AthleteList player = test.get(10);
-        // System.out.println(player);
+        System.out.println("Break");
 
-        
-        
-        // AthleteList player1 = test.remove(10);
-        // System.out.println(player1);
-        // System.out.println(test.size());
-        // test.remove(7);//Check remove method
-        // test.clear();//check clear method
-        // test.add(thinh);//Add new player. after clear
-        // System.out.println(test.isEmpty()); // Test isEmpty() method
+        // Test the clear() method
+        // test.clear();
+        System.out.println(test.size());
 
-        // AthleteList[] b = test.asArray(); // check method asArray()
-        // for (int i = 0; i < b.length; i++) {
-        //     System.out.println(b[i]);
-        // }
+        System.out.println("Break");
+        // Test the isempty() method
+        System.out.println(test.isEmpty());
 
-        // Print all the players
-        // for(int i = 0; i < test.size(); i++) {
-        //     System.out.println(test.get(i)); // Check get method
-        // }
-        // System.out.println(test.get(-1)); // Check negative index
-        // System.out.println(test.get(test.size())); // Check the index value
-        // System.out.println(test.size()); // check size
+        System.out.println("Break");
+        // Test teh train() method
+        test.train(0);
+        for (int i = 0; i < test.asArray().length; i++) {
+            System.out.println(test.get(i));
+        }
+
+        System.out.println("Break");
+        // Test the rest() method
+        test.rest(0);
+        for (int i = 0; i < test.asArray().length; i++) {
+            System.out.println(test.get(i));
+        }
     }
 }
