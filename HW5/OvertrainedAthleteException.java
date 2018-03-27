@@ -9,7 +9,6 @@ public class OvertrainedAthleteException extends RuntimeException {
 
     /**
     * Constructor that will invoke the Exception constructor
-    * @throws OvertrainedAthleteException Throw exception
     * @param message Take in the message to throw
     */
     public OvertrainedAthleteException(String message) {
