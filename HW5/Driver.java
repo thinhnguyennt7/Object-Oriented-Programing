@@ -52,36 +52,43 @@ public class Driver {
             System.out.println(test.get(i));
         }
 
+        test.remove(0);
+        System.out.println("Break");
+        for (int i = 0; i < test.asArray().length; i++) {
+            System.out.println(test.get(i));
+        }
+
         // Test size() method
         System.out.println(test.size());
-
-        System.out.println("Break");
-
-        // Test the get method
-        System.out.println(test.get(0));
-
-        System.out.println("Break");
-
-        // Test the clear() method
-        // test.clear();
+        System.out.println(test.remove(10));
         System.out.println(test.size());
+        // System.out.println("Break");
 
-        System.out.println("Break");
-        // Test the isempty() method
-        System.out.println(test.isEmpty());
+        // // Test the get method
+        // System.out.println(test.get(0));
 
-        System.out.println("Break");
-        // Test teh train() method
-        test.train(0);
-        for (int i = 0; i < test.asArray().length; i++) {
-            System.out.println(test.get(i));
-        }
+        // System.out.println("Break");
 
-        System.out.println("Break");
-        // Test the rest() method
-        test.rest(0);
-        for (int i = 0; i < test.asArray().length; i++) {
-            System.out.println(test.get(i));
-        }
+        // // Test the clear() method
+        // // test.clear();
+        // System.out.println(test.size());
+
+        // System.out.println("Break");
+        // // Test the isempty() method
+        // System.out.println(test.isEmpty());
+
+        // System.out.println("Break");
+        // // Test teh train() method
+        // test.train(0);
+        // for (int i = 0; i < test.asArray().length; i++) {
+        //     System.out.println(test.get(i));
+        // }
+
+        // System.out.println("Break");
+        // // Test the rest() method
+        // test.rest(0);
+        // for (int i = 0; i < test.asArray().length; i++) {
+        //     System.out.println(test.get(i));
+        // }
     }
 }

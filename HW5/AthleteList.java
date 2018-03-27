@@ -29,7 +29,6 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
                 newArray[i] = (T) backingArray[i];
             }
             backingArray = newArray;
-            // newArray = null;
         }
         backingArray[size] = t;
         size++;
@@ -56,7 +55,6 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
             newArray[i] = (T) backingArray[i];
         }
         backingArray = newArray;
-        // newArray = null;
         return (T[]) backingArray;
     }
 
@@ -114,8 +112,6 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
         for (int i = 0; i < newSize; i++) {
             newArray[i] = (T) backingArray[i];
         }
-        // backingArray = newArray;
-        // newArray = null;
         return newArray;
     }
 
