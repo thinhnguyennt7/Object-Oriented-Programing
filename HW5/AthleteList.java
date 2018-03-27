@@ -29,7 +29,7 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
                 newArray[i] = (T) backingArray[i];
             }
             backingArray = newArray;
-            newArray = null;
+            // newArray = null;
         }
         backingArray[size] = t;
         size++;
@@ -38,7 +38,7 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
     @Override
     public T remove(int index) {
         checkIndex(index);
-        T value = (T)backingArray[index];
+        T value = (T) backingArray[index];
         for (int i = index; i < backingArray.length - 1; i++) {
             backingArray[i] = backingArray[i + 1];
         }
@@ -51,20 +51,19 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
     // array
     // Return the new array
     private T[] fixArray(int newSize) {
-        // @SuppressWarnings("unchecked")
         T[] newArray = (T[]) new Athlete[newSize];
         for (int i = 0; i < newSize; i++) {
             newArray[i] = (T) backingArray[i];
         }
         backingArray = newArray;
-        newArray = null;
+        // newArray = null;
         return (T[]) backingArray;
     }
 
     @Override
     public T get(int index) {
         checkIndex(index);
-        return (T)backingArray[index];
+        return (T) backingArray[index];
     }
 
     @Override
@@ -115,9 +114,9 @@ public class AthleteList<T extends Athlete> implements AthleteListInterface<T> {
         for (int i = 0; i < newSize; i++) {
             newArray[i] = (T) backingArray[i];
         }
-        backingArray = newArray;
-        newArray = null;
-        return backingArray;
+        // backingArray = newArray;
+        // newArray = null;
+        return newArray;
     }
 
     /**
