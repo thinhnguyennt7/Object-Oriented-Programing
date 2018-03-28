@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Comparator;
 import java.util.TreeSet;
-// import java.util.Collection;
 
 public class WordCount {
 	private Map<String, Integer> wordCounts;
