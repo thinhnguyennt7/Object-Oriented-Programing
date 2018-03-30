@@ -12,16 +12,15 @@ public class WordCount {
 
 	private class RankComparator implements Comparator<String> {
 		public int compare(String w1, String w2) {
-			return wordCounts.get(w1) - wordCounts.get(w2);
+			int comp = wordCounts.get(w1) - wordCounts.get(w2);
+			return (comp == 0) ? w1.compareTo(w2) : comp; // compareTo in the string class
 		}
 	}
 
 	public WordCount(String fileName) throws FileNotFoundException {
 		Scanner sc = new Scanner(new File(fileName));
-		// wordCounts = new HashMap<>();
 		wordCounts = new HashMap<>();
 		while (sc.hasNext()) {
-			// System.out.println(sc.next());
 			String word = sc.next();
 			if (wordCounts.keySet().contains(word)) {
 				int curCount = wordCounts.get(word);
@@ -50,4 +49,4 @@ public class WordCount {
 		}
 	}
 }
-//java WordCount i-have-a-dream.txt | wc - 1
+//java WordCount i-have-a-dream.txt | wc - l
