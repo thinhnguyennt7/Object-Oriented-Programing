@@ -29,12 +29,13 @@ public class Message {
     */
     public Message(Optional<String> contactName, String to, String from,
         String body, LocalDateTime date, boolean isImportant) {
-        contactName = this.contactName;
-        to = this.to;
-        from = this.from;
-        body = this.body;
-        date = this.date;
-        isImportant = this.isImportant;
+        // contactName = Optional.of(contactName);
+        this.contactName = contactName;
+        this.to = to;
+        this.from = from;
+        this.body = body;
+        this.date = date;
+        this.isImportant = isImportant;
     }
 
    /**
@@ -77,6 +78,10 @@ public class Message {
     */
     public boolean getIsImportant() {
         return isImportant;
+    }
+
+    public String toString() {
+        return "***Contact: " + contactName + ", To: " + to + ", From: " + from + ", Body: " + body + ", Date: " + date + ", isImportant: " + isImportant + "****";
     }
 
 }
