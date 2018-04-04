@@ -1,3 +1,4 @@
+import java.time.LocalDateTime;
 import java.ulti.function.Predicate;
 import java.ulti.List;
 import java.ulti.Map;
@@ -18,11 +19,12 @@ public class Database {
     *
     */
     public Database(List<Message> messages) {
-        messages = this.messages;
+        messages = new ArrayList<Message>();
+        messages.add(this.messages);
     }
 
     public Message getMessage(int n) {
-        return n;
+        return messages.get(n);
     }
 
     public List<Message> getMessages() {
