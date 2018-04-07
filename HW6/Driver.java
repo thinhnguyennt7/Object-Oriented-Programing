@@ -25,6 +25,9 @@ public class Driver {
 		
 		System.out.println(testMessage);
 
+		Database testDataBase = new Database(testMessage);
+
+		System.out.println(getMessages(0));
 		// System.out.println(testMessage.getContact());
 		// System.out.println(testMessage.getTo());
 		// System.out.println(testMessage.getFrom());
@@ -41,7 +44,6 @@ public class Driver {
 
 		// LocalDateTime specificDate = LocalDateTime.of(2014, Month.MARCH, 1, 10, 10, 30);
 		// System.out.println("Specific Date="+specificDate);
-
 
 	}
 }
