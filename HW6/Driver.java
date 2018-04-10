@@ -1,54 +1,86 @@
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.ArrayList;
+
+import java.util.function.Predicate;
 import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+
 public class Driver {
-	
+
 	public static void main(String[] args) {
 
-		// Optional.ofNullable() method returns a Non-empty Optional
-		// if a value present in the given object. Otherwise returns empty Optional
 
-		// Optional.empty() method is useful to create an empty Optional object.
+		LocalDateTime tienTime = LocalDateTime.of(2016,1,1,1,1,1);
+		LocalDateTime tuanTime = LocalDateTime.of(2017,2,2,2,2,2);
+		LocalDateTime thinhTime = LocalDateTime.of(2018,2,2,2,2,2);
+		LocalDateTime khoaTime = LocalDateTime.of(2016,2,2,2,2,2);
 
 
-		// LocalDateTime is an immutable date-time object that represents a date-time,
-		 // with default format as yyyy-MM-dd-HH-mm-ss.zzz. It provides a factory method
-		// that takes LocalDate and LocalTime input arguments to create LocalDateTime
-		 // instance.
+		Message tien = new Message(
+			Optional.ofNullable("TienH"), "Tien", "Na", "Tien to Na",tienTime, true);
 
-		// LocalDateTime rightnow = LocalDateTime.now();
+		Message tien2 = new Message(
+			Optional.ofNullable("TienH"), "Tien", "Na", "Tien to Na2",tienTime, true);
 
-		String strDatewithTime = "2015-08-04T10:11:30";
-		LocalDateTime aLDT = LocalDateTime.parse(strDatewithTime);
+		Message tien3 = new Message(
+			Optional.ofNullable("TienH"), "Tien", "Na", "Tien to Na3",tienTime, true);
 
-		String strDatewithTime1 = "2015-07-04T10:11:30";
-		LocalDateTime aLD = LocalDateTime.parse(strDatewithTime1);
-		// System.out.println("Date with Time: " + aLDT);
+		Message tuan = new Message(
+			Optional.ofNullable(null), "Tuan", "Na", "Tuan to Na",tuanTime, false);
 
-		Message testMessage = new Message(Optional.ofNullable("Tien Ho"), "Tien", "Thinh", "Testing message", aLD, true);
-		Message testMessage2 = new Message(Optional.ofNullable("Tien Ho"), "Tien", "Thinh", "Testing message", aLD, false);
-		Message testMessage1 = new Message(Optional.ofNullable("thinh nguyen"), "Thinh", "tien", "Hello world", aLDT, true);
+		Message thinh = new Message(
+			Optional.ofNullable("Thinh"), "Thinh", "Na", "Thinh to Na",thinhTime, true);
+
+		Message thinh2 = new Message(
+			Optional.ofNullable("Thinh"), "Thinh", "Na", "Thinh to Na2",thinhTime, false);
+
+		Message khoa = new Message(
+			Optional.ofNullable("Khoa"), "Khoa", "Na", "Khoa to Na",khoaTime, false);
+
+		Message Vinh = new Message(
+			Optional.ofNullable("Vinh"), "Vinh", "Na", "Vinh to Na",khoaTime, false);
 
 		List<Message> test = new ArrayList<>();
-		test.add(testMessage);
-		test.add(testMessage1);
-		test.add(testMessage2);
+		test.add(tien);
+		test.add(tien2);
+		test.add(tien3);
+		test.add(tuan);
+		test.add(thinh);
+		test.add(thinh2);
+		test.add(khoa);
+		test.add(Vinh);
 
-		// System.out.println(testMessage.toString());
+
+		// int a = tuanTime.compareTo(tienTime);
+		// int b = tuanTime.compareTo(thinhTime);
+		// System.out.println(a);
+		// System.out.println(b);
+		// boolean checking = tuanTime.compareTo(tienTime) > 1 ;
+		// System.out.println(checking);
+
 
 		Database testDataBase = new Database(test);
 
-		// testDataBase.filter((Message p) testMessage);
-		testDataBase.filter((Message p) -> {
+		// System.out.println(testDataBase.getMessagesBetween(LocalDateTime.of(2016,5,1,1,1,1),thinhTime));
 
-            return p.getBody().contains("Hello");
-        });
+		// System.out.println(testDataBase.getMessages());
+		// System.out.println(testDataBase.getMessage(0));
 
-		// System.out.println(testDataBase.getMessagesBetween(aLD,aLD));
+
+		//System.out.println(thinh.getContactName().get());
+		// System.out.println(tuan.getContactName().isPresent());
 		// System.out.println(testDataBase.sortMessagesByContact());
-		// System.out.println(testDataBase.sortMessagesByContact());
+
+		//Map<String, List<Message>> map = testDataBase.sortMessagesByContact();
+		//System.out.println(map);
+		// System.out.println(map.size());
+
+		// System.out.println(testDataBase.getMessagesWithKeyword("inh"));
 		// System.out.println(testDataBase.getMessagesWithPriority());
-		System.out.println(testDataBase.getMessagesWithKeyword("Hello"));
+		// System.out.println(testDataBase.getMessage(3));
+
 	}
 }

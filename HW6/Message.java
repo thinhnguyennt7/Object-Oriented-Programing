@@ -29,7 +29,6 @@ public class Message {
     */
     public Message(Optional<String> contactName, String to, String from,
         String body, LocalDateTime date, boolean isImportant) {
-        // contactName = Optional.of(contactName);
         this.contactName = contactName;
         this.to = to;
         this.from = from;
@@ -40,13 +39,15 @@ public class Message {
 
    /**
     * Getter method for the contact
+    * @return Optional Return the contact name
     */
-    public Optional<String> getContact() {
+    public Optional<String> getcontactName() {
         return contactName;
     }
 
     /**
     * Getter method for the to the person want to send message to
+    * @return String Return the to
     */
     public String getTo() {
         return to;
@@ -54,6 +55,7 @@ public class Message {
 
     /**
     * Getter method for the from a person want to send the message
+    * @return String Return the from
     */
     public String getFrom() {
         return from;
@@ -61,6 +63,7 @@ public class Message {
 
     /**
     * Getter method for the body message
+    * @return String Return the body of the message
     */
     public String getBody() {
         return body;
@@ -68,6 +71,7 @@ public class Message {
 
     /**
     * Getter method for the local date time
+    * @return LocalDateTime Return the to date
     */
     public LocalDateTime getDate() {
         return date;
@@ -75,12 +79,9 @@ public class Message {
 
     /**
     * Getter method for the isImportant
+    * @return boolean Return if the message is important
     */
     public boolean getIsImportant() {
         return isImportant;
-    }
-
-    public String toString() {
-        return contactName + to + from + body + date + isImportant;
     }
 }
