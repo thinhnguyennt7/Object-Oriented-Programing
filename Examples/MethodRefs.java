@@ -11,10 +11,17 @@ public class MethodRefs {
 
 	public static void main(String[] args) {
 		doo(x -> System.out.println(x));
-
+		// or
 		doo(System.out::println); // method reference
 
 		Arrays.asList("foo", "bar", "baz", "dance!").stream()
 			.forEach(System.out::println);
+
+
+		// s -> System.out.println(s);
+
+		// Same as 
+
+		// System.out::println
 	}
 }

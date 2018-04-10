@@ -30,11 +30,11 @@ public class SortTroopers {
 
         // Note that sort() is destructive, that is, it modifies the
         // collection rather than returning a sorted copy.
-        Collections.sort(troopers);
-        System.out.println("\nAfter sorting:\n" + troopers);
+        // Collections.sort(troopers);
+        // System.out.println("\nAfter sorting:\n" + troopers);
 
         // Using an instance of a named (inner) class
-        Collections.sort(troopers, new MustacheComparator());
+        // Collections.sort(troopers, new MustacheComparator());
 
         // Using an instance of an anonymous inner class
         Collections.sort(troopers, new Comparator<Trooper>() { 
@@ -50,16 +50,16 @@ public class SortTroopers {
         });
 
         // Using a lambda expression( is the same syntax to create an anonymous inner class)
-        Collections.sort(troopers, (Trooper a, Trooper b) -> {
-            if (a.hasMustache() && !b.hasMustache()) {
-                return 1;
-            } else if (b.hasMustache() && !a.hasMustache()) {
-                return -1;
-            } else {
-                return a.getName().compareTo(b.getName());
-            }
-        });
-        System.out.println("\nAfter mustache-based sorting:\n" + troopers);
+        // Collections.sort(troopers, (Trooper a, Trooper b) -> {
+        //     if (a.hasMustache() && !b.hasMustache()) {
+        //         return 1;
+        //     } else if (b.hasMustache() && !a.hasMustache()) {
+        //         return -1;
+        //     } else {
+        //         return a.getName().compareTo(b.getName());
+        //     }
+        // });
+        // System.out.println("\nAfter mustache-based sorting:\n" + troopers);
 
         // Using a composed comparator
         Comparator<Trooper> byMustacheThenName =

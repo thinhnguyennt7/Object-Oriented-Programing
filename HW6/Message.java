@@ -81,7 +81,6 @@ public class Message {
     }
 
     public String toString() {
-        return "***Contact: " + contactName + ", To: " + to + ", From: " + from + ", Body: " + body + ", Date: " + date + ", isImportant: " + isImportant + "****";
+        return contactName + to + from + body + date + isImportant;
     }
-
 }

@@ -1,5 +1,7 @@
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 public class Driver {
 	
 	public static void main(String[] args) {
@@ -19,31 +21,34 @@ public class Driver {
 
 		String strDatewithTime = "2015-08-04T10:11:30";
 		LocalDateTime aLDT = LocalDateTime.parse(strDatewithTime);
-		System.out.println("Date with Time: " + aLDT);
 
-		Message testMessage = new Message(Optional.of("Tien Ho"), "Tien", "Thinh", "Testing message", aLDT, true);
-		
-		System.out.println(testMessage);
+		String strDatewithTime1 = "2015-07-04T10:11:30";
+		LocalDateTime aLD = LocalDateTime.parse(strDatewithTime1);
+		// System.out.println("Date with Time: " + aLDT);
 
-		Database testDataBase = new Database(testMessage);
+		Message testMessage = new Message(Optional.ofNullable("Tien Ho"), "Tien", "Thinh", "Testing message", aLD, true);
+		Message testMessage2 = new Message(Optional.ofNullable("Tien Ho"), "Tien", "Thinh", "Testing message", aLD, false);
+		Message testMessage1 = new Message(Optional.ofNullable("thinh nguyen"), "Thinh", "tien", "Hello world", aLDT, true);
 
-		System.out.println(getMessages(0));
-		// System.out.println(testMessage.getContact());
-		// System.out.println(testMessage.getTo());
-		// System.out.println(testMessage.getFrom());
-		// System.out.println(testMessage.getBody());
-		// System.out.println(testMessage.getDate());
-		// System.out.println(testMessage.getIsImportant());
+		List<Message> test = new ArrayList<>();
+		test.add(testMessage);
+		test.add(testMessage1);
+		test.add(testMessage2);
 
+		// System.out.println(testMessage.toString());
 
-		// public static LocalDateTime of​(int year,
-  //                              Month month,
-  //                              int dayOfMonth,
-  //                              int hour,
-  //                              int minute
+		Database testDataBase = new Database(test);
 
-		// LocalDateTime specificDate = LocalDateTime.of(2014, Month.MARCH, 1, 10, 10, 30);
-		// System.out.println("Specific Date="+specificDate);
+		// testDataBase.filter((Message p) testMessage);
+		testDataBase.filter((Message p) -> {
 
+            return p.getBody().contains("Hello");
+        });
+
+		// System.out.println(testDataBase.getMessagesBetween(aLD,aLD));
+		// System.out.println(testDataBase.sortMessagesByContact());
+		// System.out.println(testDataBase.sortMessagesByContact());
+		// System.out.println(testDataBase.getMessagesWithPriority());
+		System.out.println(testDataBase.getMessagesWithKeyword("Hello"));
 	}
 }
