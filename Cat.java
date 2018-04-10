@@ -1,18 +1,15 @@
 import java.time.LocalDate;
-import java.util.List;
 
 public class Cat {
 
     private String name;
     private LocalDate anniversary;
     private int weight;
-    private List<Cats> cat;
 
     public Cat(String name, LocalDate anniversary, int weight) {
-        cat = new ArrayList<Cats>();
-        cat.add(this.name);
-        cat.add(this.anniversary);
-        cat.add(this.weight);
+        this.name = name;
+        this.anniversary = anniversary;
+        this.weight = weight;
     }
 
     public String getName() { return name; }
@@ -21,10 +18,20 @@ public class Cat {
 
     public int getWeight() { return weight; }
 
-    public static void main(String[] args) {
-        LocalDate aldt = LocalDate.now();
-        Cat cat1 = new Cat("Thinh", aldt, 120);
-        Cat cat2 = new Cat("Tien", aldt, 130);
-        Cat cat3 = new Cat("Test", aldt, 140);
+    @Override
+    public boolean equals(Object other) {
+        if (null == other) return false;
+        if (this == other) return true;
+        if (!(other instanceof Cat)) return false;
+        Cat that = (Cat) other;
+        return this.name.equals(that.name) && this.anniversary.equals(that.anniversary) && this.weight == that.weight;
+    }
+
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + weight;
+        result = 31 * result + anniversary.hashCode();
+        return result;
     }
 }
