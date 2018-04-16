@@ -14,16 +14,17 @@ public class Cats {
                           new Cat("Bordeaux", LocalDate.of(2018, 2, 11), 10));
 
         // Get the current and the year before
-        int currentYear = LocalDate.now().getYear();
-        int lastYear = currentYear - 1;
+        LocalDate currentYear = LocalDate.now();
+        LocalDate lastYear = currentYear.minusYears(1);
 
         // Lamba expression with stream()
         List<Cat> kitten =
         	cats.stream()
-        	.filter(cat -> cat.getAnniversary().getYear() == lastYear)
+        	.filter(cat -> cat.getAnniversary().compareTo(lastYear) >= 0
+            && cat.getAnniversary().compareTo(currentYear) <= 0)
         	.collect(Collectors.toList());
 
     	// Driver
-		System.out.println(kitten);
+      System.out.println(kitten);
     }
 }

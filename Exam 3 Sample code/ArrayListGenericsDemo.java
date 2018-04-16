@@ -7,6 +7,7 @@ public class ArrayListGenericsDemo {
         strings.add("Helluva");
         strings.add("Engineer!");
         Integer BULL_DOG = Integer.MIN_VALUE;
+        // System.out.println(BULL_DOG);
         // Since strings is a typed collection, Java type checks
         // insertions and retrievals
         //strings.add(BULL_DOG); Won't compile
@@ -33,6 +34,7 @@ public class ArrayListGenericsDemo {
         // And since we have a typed collection, Java will also autobox
         // when we retrieve elements form the collection
         int num = ints.get(0);
+        System.out.println(num);
     }
 
 }

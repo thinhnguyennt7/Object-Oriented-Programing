@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 public class ArrayListEqualsDemo {
 
     abstract static class Person {
