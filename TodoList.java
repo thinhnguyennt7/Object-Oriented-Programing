@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,7 +22,7 @@ public class TodoList extends Application {
 
 		ListView<String> listView = new ListView<String>(todos);
 
-		Button addButton = new Button("Add");
+		Button <addButton = new Button("Add");
 
 		TextField inputField = new TextField();
 
@@ -32,6 +33,10 @@ public class TodoList extends Application {
 			inputField.requestFocus(); // We can countinue to type in the input file
 			System.out.println("Add new Todo");
 		});
+
+		// whenever the input is empty, it will return true then the disable also true then
+		// not thing will add
+		addButton.disableProperty().bind(Bindings.isEmpty(inputField.textProperty()));
 
 		HBox entryBox = new HBox();
 		entryBox.getChildren().addAll(inputField, addButton);
