@@ -7,6 +7,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.BorderPane;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -30,28 +34,53 @@ import java.util.List;
 */
 public class MusicPlayer extends Application {
 
+    /**
+    * The main test for Application
+    * @param args Take in an args
+    */
+    public static void main(String[] args) { launch(args); }
+
     // Initilize the variables
     Button clickPlay, clickPause, clickSearch, clickShow;
     MediaPlayer mediaplayer;
     Media musicFile;
     BorderPane pane;
     final HBox hb = new HBox();
+    private String currentSong;
 
+    private final ObservableList<Song> data =
+        FXCollections.observableArrayList(
+            new Song("Bittersweet.mp3", "Kevin MacLeod", "Bittersweet", ""),
+            new Song("BossaBossa.mp3", "Kevin MacLeod", "BossaBossa", ""),
+            new Song("JoshWoodward-Ashes-07-AlreadyThere.mp3", "Josh Woodward", "Already There", "Ashes"),
+            new Song("JoshWoodward-AttS-01-Release.mp3", "Josh Woodward", "Release", "Addressed to the Stars"),
+            new Song("Overworld.mp3", "Kevin MacLeod", "Overworld", "")
+        );
+
+    // Create a table view
+    private TableView<Song> table = new TableView<Song>();
+
+    @SuppressWarnings("unchecked")
     @Override
     public void start(Stage stage) {
 
-        // Create a table view
-        TableView table = new TableView();
+        // table.setItems(TableViewHelper.getSongList());
+
         table.setEditable(true);
         table.setMinHeight(550);
 
         // Create columns for table
         TableColumn fileName = new TableColumn("File Name");
+        fileName.setCellValueFactory(new PropertyValueFactory<Song,String>("filename"));
         TableColumn attri = new TableColumn("Attributes");
         TableColumn artist = new TableColumn("Artist");
+        artist.setCellValueFactory(new PropertyValueFactory<Song,String>("artist"));
         TableColumn title = new TableColumn("Title");
+        title.setCellValueFactory(new PropertyValueFactory<Song,String>("title"));
         TableColumn album = new TableColumn("Album");
+        album.setCellValueFactory(new PropertyValueFactory<Song,String>("album"));
                 
+        table.setItems(data);
         // Add the column to the table
         table.getColumns().addAll(fileName, attri);
         attri.getColumns().addAll(artist, title, album);
@@ -72,28 +101,49 @@ public class MusicPlayer extends Application {
 
         // Create Buttons
         clickPlay = new Button("Play");
+        if (data.size() == 0) {
+            clickPlay.setDisable(true);
+        }
         clickPause = new Button("Pause");
+        clickPause.setDisable(true);
         clickSearch = new Button("Search Songs");
         clickShow = new Button("Show all Songs");
         hb.getChildren().addAll(clickPlay, clickPause, clickSearch, clickShow);
         hb.setSpacing(5);
 
         // Import music
-        // Media musicFile = new Media("Bittersweet.mp3");
-        // mediaplayer = new MediaPlayer(musicFile);
+        musicFile = new Media(getClass().getResource("Bittersweet.mp3").toExternalForm());
+        mediaplayer = new MediaPlayer(musicFile);
+
+        // Get metadata for the song
+        mediaplayer.setOnReady(() -> {
+            ObservableMap<String, Object> ol = musicFile.getMetadata();
+            // System.out.println(ol);
+        });
 
         // Functions for each Buttons
         clickPlay.setOnAction(event -> {
+            mediaplayer.play();
+            clickPause.setDisable(false);
             System.out.println("Music is playing!!!");
         });
 
-        // clickPlay.setOnAction(new EventHandler<ActionEvent>() {
-        //     @Override
-        //     public void handle(ActionEvent song) {
-        //         // mediaplayer.play();
-        //         System.out.println("Music is playing!!!");
-        //     }
-        // });
+        clickPause.setOnAction(event -> {
+            mediaplayer.pause();
+            System.out.println("Music is pausing!!!");
+        });
+
+        // Get data when click on row
+        table.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 1) {
+                clickPlay.setDisable(true);
+                if (table.getSelectionModel().getSelectedItem() != null) {
+                Song selectedSong = table.getSelectionModel().getSelectedItem();
+                currentSong = (String) selectedSong.getFilename();
+                System.out.println("The Current Song: " + currentSong);
+                }
+            }
+        });
 
         // Create horizontal scrol bar
         ScrollBar scroll = new ScrollBar();
@@ -117,9 +167,50 @@ public class MusicPlayer extends Application {
         stage.show();
     }
 
-    /**
-    * The main test for Application
-    * @param args Take in an args
-    */
-    public static void main(String[] args) { launch(args); }
+    public static class Song {
+        private String filename;
+        private String artist;
+        private String title;
+        private String album;
+
+        // Song constructor
+        public Song (String filename, String artist, String title, String album) {
+            this.filename = filename;
+            this.artist = artist;
+            this.title = title;
+            this.album = album;
+        }
+
+        public void setFilename(String filename) {
+            this.filename = filename;
+        }
+
+        public void setArtist(String artist) {
+            this.artist = artist;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setAlbum(String album) {
+            this.album = album;
+        }
+
+        public String getAlbum() {
+            return album;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getArtist() {
+            return artist;
+        }
+
+        public String getFilename() {
+            return filename;
+        }
+    }
 }
