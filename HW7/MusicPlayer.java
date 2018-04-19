@@ -1,35 +1,44 @@
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.Group;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.BorderPane;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.layout.HBox;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
+import javafx.application.Platform;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+// import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
-import javafx.scene.text.Font;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.Scene;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+// import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+// import javafx.stage.FileChooser;
+// import javafx.scene.text.Font;
+// import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.geometry.Orientation;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.ChoiceDialog;
+import javafx.collections.MapChangeListener;
+import javafx.collections.MapChangeListener.Change;
 
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 import java.io.File;
 import java.util.Optional;
+// import java.nio.file.Path;
+// import java.nio.file.Paths;
 
 /**
 * This is the music control player GUI
@@ -49,45 +58,30 @@ public class MusicPlayer extends Application {
     MediaPlayer mediaplayer;
     Media musicFile;
     String theCurrentSong;
-    BorderPane pane;
+    // BorderPane pane;
     final HBox hb = new HBox();
     boolean isPlaying = false;
     ObservableList<Song> songSearch = FXCollections.observableArrayList();
+    ObservableList<Song> data = FXCollections.observableArrayList();
+    private static enum Choices {Artist, Album, Title}
+    private TableView<Song> table = new TableView<Song>();
 
-    // for (File file:fList) {
-    // for (int i = 0; i < 1: i++) {
-
-    // }
-        // if (file.getName().contains("mp3")) {
-    // System.out.println(fList);
-        // } 
-    // }
-    private void getFile() {
-        File directory = new File("/Users/thinhnguyen/Dropbox/Spring 2018 - GA Tech/CS1331/Object-Oriented-Programing/HW7");
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.getName().contains("mp3")) {
-                System.out.println(file.getName());
+    @Override
+    public void init() {
+        // Check all the files in the folder and get all the file mp3
+        File currentDir = new File("").getAbsoluteFile();
+        File[] filesList = currentDir.listFiles();
+        for (File file : filesList) {
+            if (file.isFile() && file.getName().contains(".mp3")) {
+                data.add(new Song(file));
             }
         }
     }
 
-    private final ObservableList<Song> data =
-        FXCollections.observableArrayList(
-            new Song("Bittersweet.mp3", "Kevin MacLeod", "Bittersweet", ""),
-            new Song("BossaBossa.mp3", "Kevin MacLeod", "BossaBossa", ""),
-            new Song("JoshWoodward-Ashes-07-AlreadyThere.mp3", "Josh Woodward", "Already There", "Ashes"),
-            new Song("JoshWoodward-AttS-01-Release.mp3", "Josh Woodward", "Release", "Addressed to the Stars"),
-            new Song("Overworld.mp3", "Kevin MacLeod", "Overworld", ""),
-            new Song("Airplanes.mp3", "Hayley Williams", "Airplanes", "Top 40 USA - 2010")
-        );
-
-    // Create a table view
-    private TableView<Song> table = new TableView<Song>();
-
     @SuppressWarnings("unchecked")
     @Override
     public void start(Stage stage) {
+
         table.setEditable(true);
         table.setMinHeight(550);
 
@@ -127,12 +121,12 @@ public class MusicPlayer extends Application {
         clickPause.setDisable(true);
         clickSearch = new Button("Search Songs");
         clickShow = new Button("Show all Songs");
+        clickShow.setDisable(true);
 
         // Disable button functionalites
         if (data.size() == 0) {
             clickPlay.setDisable(true);
             clickSearch.setDisable(true);
-            clickShow.setDisable(true);
         }
 
         hb.getChildren().addAll(clickPlay, clickPause, clickSearch, clickShow);
@@ -170,13 +164,6 @@ public class MusicPlayer extends Application {
             }
         });
 
-        // Get metadata for the song
-        // mediaplayer.setOnReady(() -> {
-        //     ObservableMap<String, Object> ol = musicFile.getMetadata();
-        //     // Object value = ol.get("Composer"); 
-        //     // System.out.println(ol);
-        // });
-
         if (!isPlaying) {
             clickPause.setDisable(true);
         }
@@ -197,28 +184,56 @@ public class MusicPlayer extends Application {
         });
 
         clickSearch.setOnAction(event -> {
+            Dialog<Options> dialog = new Dialog<>();
+            dialog.setTitle("Search for Song");
+            dialog.setHeaderText("Please choose and type");
+            DialogPane dialogPane = dialog.getDialogPane();
+            dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+            TextField textField = new TextField("Keyword...");
+            ObservableList<Choices> choices = FXCollections.observableArrayList(Choices.values());
+            ComboBox<Choices> comboBox = new ComboBox<>(choices);
+            comboBox.getSelectionModel().selectFirst();
+            dialogPane.setContent(new VBox(8, textField, comboBox));
+            Platform.runLater(textField::requestFocus);
+            dialog.setResultConverter((ButtonType button) -> {
+                if (button == ButtonType.OK) {
+                    return new Options(textField.getText(), comboBox.getValue());
+                }
+                return null;
+            });
 
-            // String [] arrayData = {"Title", "Artist", "Album"};
-            // List<String> dialogData;
-            // dialogData = Arrays.asList(arrayData);
-
-            // Dialog box
-            TextInputDialog dialog = new TextInputDialog("Type some thing...");
-            // dialog = new ChoiceDialog(dialogData.get(0), dialogData);
-            dialog.setTitle("Search box");
-            dialog.setHeaderText("Type the name to search for the song");
-            dialog.setContentText("Please enter the artist:");
-            Optional<String> result = dialog.showAndWait();
+            Optional<Options> result = dialog.showAndWait();
+            Options valueOut = result.get();
             if (result.isPresent()) {
+                clickShow.setDisable(false);
+                System.out.println("Message: " + valueOut.getText());
+                System.out.println("Options: " + valueOut.getChoices().toString());
+                songSearch.clear();
                 for (int i = 0; i < data.size(); i++) {
-                    if (data.get(i).getArtist().contains(result.get())) {
-                        // System.out.println(data.get(i));
-                        // System.out.println(data.get(i).getFilename());
-                        songSearch.add(data.get(i));
+                    if (valueOut.getChoices().toString().equals("Artist")) {
+                        if (data.get(i).getArtist().contains(valueOut.getText())) {
+                            System.out.println(data.get(i).getFilename());
+                            songSearch.add(data.get(i));
+                        }
+                    } else if (valueOut.getChoices().toString().equals("Album")) {
+                        if (data.get(i).getAlbum().contains(valueOut.getText())) {
+                            System.out.println(data.get(i).getFilename());
+                            songSearch.add(data.get(i));
+                        }
+                    } else {
+                        if (data.get(i).getTitle().contains(valueOut.getText())) {
+                            System.out.println(data.get(i).getFilename());
+                            songSearch.add(data.get(i));
+                        }
                     }
                 }
-                System.out.println(songSearch);
+                table.setItems(songSearch);
             }
+        });
+
+        clickShow.setOnAction(event -> {
+            table.setItems(data);
+            clickShow.setDisable(true);
         });
 
         // Create horizontal scrol bar
@@ -243,34 +258,50 @@ public class MusicPlayer extends Application {
         stage.show();
     }
 
+    private static class Options {
+        String text;
+        Choices choices;
+
+        public Options(String text, Choices choices) {
+            this.text = text;
+            this.choices = choices;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public Choices getChoices() {
+            return choices;
+        }
+    }
+
     public static class Song {
         private String filename;
         private String artist;
         private String title;
         private String album;
+        private File file;
+        private Media music;
 
         // Song constructor
-        public Song (String filename, String artist, String title, String album) {
-            this.filename = filename;
-            this.artist = artist;
-            this.title = title;
-            this.album = album;
-        }
-
-        public void setFilename(String filename) {
-            this.filename = filename;
-        }
-
-        public void setArtist(String artist) {
-            this.artist = artist;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public void setAlbum(String album) {
-            this.album = album;
+        public Song (File file) {
+            music = new Media(getClass().getResource(file.getName()).toExternalForm());
+            music.getMetadata().addListener(new MapChangeListener<String, Object>() {
+                @Override
+                public void onChanged(Change<? extends String, ? extends Object> ch) {
+                    if (ch.wasAdded()) {
+                        filename = (String) file.getName();
+                        if (ch.getKey().equals("artist")) {
+                            artist = (String) ch.getValueAdded();
+                        } else if (ch.getKey().equals("album")) {
+                            album = (String) ch.getValueAdded();
+                        } else if (ch.getKey().equals("title")) {
+                            title = (String) ch.getValueAdded();
+                        }
+                    }
+                }
+            });
         }
 
         public String getAlbum() {
@@ -288,9 +319,5 @@ public class MusicPlayer extends Application {
         public String getFilename() {
             return filename;
         }
-
-        // public String toString() {
-        //     return artist;
-        // }
     }
 }
