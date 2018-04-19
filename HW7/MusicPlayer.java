@@ -22,10 +22,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Orientation;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ChoiceDialog;
 
 import java.io.FilenameFilter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.io.File;
+import java.util.Optional;
 
 /**
 * This is the music control player GUI
@@ -44,9 +48,29 @@ public class MusicPlayer extends Application {
     Button clickPlay, clickPause, clickSearch, clickShow;
     MediaPlayer mediaplayer;
     Media musicFile;
+    String theCurrentSong;
     BorderPane pane;
     final HBox hb = new HBox();
-    private String currentSong;
+    boolean isPlaying = false;
+    ObservableList<Song> songSearch = FXCollections.observableArrayList();
+
+    // for (File file:fList) {
+    // for (int i = 0; i < 1: i++) {
+
+    // }
+        // if (file.getName().contains("mp3")) {
+    // System.out.println(fList);
+        // } 
+    // }
+    private void getFile() {
+        File directory = new File("/Users/thinhnguyen/Dropbox/Spring 2018 - GA Tech/CS1331/Object-Oriented-Programing/HW7");
+        File[] fList = directory.listFiles();
+        for (File file : fList) {
+            if (file.getName().contains("mp3")) {
+                System.out.println(file.getName());
+            }
+        }
+    }
 
     private final ObservableList<Song> data =
         FXCollections.observableArrayList(
@@ -54,7 +78,8 @@ public class MusicPlayer extends Application {
             new Song("BossaBossa.mp3", "Kevin MacLeod", "BossaBossa", ""),
             new Song("JoshWoodward-Ashes-07-AlreadyThere.mp3", "Josh Woodward", "Already There", "Ashes"),
             new Song("JoshWoodward-AttS-01-Release.mp3", "Josh Woodward", "Release", "Addressed to the Stars"),
-            new Song("Overworld.mp3", "Kevin MacLeod", "Overworld", "")
+            new Song("Overworld.mp3", "Kevin MacLeod", "Overworld", ""),
+            new Song("Airplanes.mp3", "Hayley Williams", "Airplanes", "Top 40 USA - 2010")
         );
 
     // Create a table view
@@ -63,9 +88,6 @@ public class MusicPlayer extends Application {
     @SuppressWarnings("unchecked")
     @Override
     public void start(Stage stage) {
-
-        // table.setItems(TableViewHelper.getSongList());
-
         table.setEditable(true);
         table.setMinHeight(550);
 
@@ -101,47 +123,101 @@ public class MusicPlayer extends Application {
 
         // Create Buttons
         clickPlay = new Button("Play");
-        if (data.size() == 0) {
-            clickPlay.setDisable(true);
-        }
         clickPause = new Button("Pause");
         clickPause.setDisable(true);
         clickSearch = new Button("Search Songs");
         clickShow = new Button("Show all Songs");
+
+        // Disable button functionalites
+        if (data.size() == 0) {
+            clickPlay.setDisable(true);
+            clickSearch.setDisable(true);
+            clickShow.setDisable(true);
+        }
+
         hb.getChildren().addAll(clickPlay, clickPause, clickSearch, clickShow);
         hb.setSpacing(5);
 
-        // Import music
-        musicFile = new Media(getClass().getResource("Bittersweet.mp3").toExternalForm());
-        mediaplayer = new MediaPlayer(musicFile);
+        // Get data when click on row
+        table.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 1) {
+                clickPlay.setDisable(false);
+                if (table.getSelectionModel().getSelectedItem() != null) {
+                    Song selectedSong = table.getSelectionModel().getSelectedItem();
+                    theCurrentSong = (String) selectedSong.getFilename();
+                    if (theCurrentSong != null) {
+                        musicFile = new Media(getClass().getResource(theCurrentSong).toExternalForm());
+                        mediaplayer = new MediaPlayer(musicFile);
+                    }
+                    System.out.println("The Current Song: " + theCurrentSong);
+                }
+            } else if (event.getClickCount() == 2) {
+                if (isPlaying == true || isPlaying == false) {
+                    mediaplayer.stop();
+                    if (table.getSelectionModel().getSelectedItem() != null) {
+                        Song selectedSong = table.getSelectionModel().getSelectedItem();
+                        theCurrentSong = (String) selectedSong.getFilename();
+                        if (theCurrentSong != null) {
+                            musicFile = new Media(getClass().getResource(theCurrentSong).toExternalForm());
+                            mediaplayer = new MediaPlayer(musicFile);
+                            mediaplayer.play();
+                            clickPause.setDisable(false);
+                            isPlaying = true;
+                        }
+                        System.out.println("The Current Song: " + theCurrentSong);
+                    } 
+                }
+            }
+        });
 
         // Get metadata for the song
-        mediaplayer.setOnReady(() -> {
-            ObservableMap<String, Object> ol = musicFile.getMetadata();
-            // System.out.println(ol);
-        });
+        // mediaplayer.setOnReady(() -> {
+        //     ObservableMap<String, Object> ol = musicFile.getMetadata();
+        //     // Object value = ol.get("Composer"); 
+        //     // System.out.println(ol);
+        // });
+
+        if (!isPlaying) {
+            clickPause.setDisable(true);
+        }
 
         // Functions for each Buttons
         clickPlay.setOnAction(event -> {
+            isPlaying = true;
             mediaplayer.play();
             clickPause.setDisable(false);
             System.out.println("Music is playing!!!");
         });
 
         clickPause.setOnAction(event -> {
+            isPlaying = false;
+            clickPause.setDisable(true);
             mediaplayer.pause();
             System.out.println("Music is pausing!!!");
         });
 
-        // Get data when click on row
-        table.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 1) {
-                clickPlay.setDisable(true);
-                if (table.getSelectionModel().getSelectedItem() != null) {
-                Song selectedSong = table.getSelectionModel().getSelectedItem();
-                currentSong = (String) selectedSong.getFilename();
-                System.out.println("The Current Song: " + currentSong);
+        clickSearch.setOnAction(event -> {
+
+            // String [] arrayData = {"Title", "Artist", "Album"};
+            // List<String> dialogData;
+            // dialogData = Arrays.asList(arrayData);
+
+            // Dialog box
+            TextInputDialog dialog = new TextInputDialog("Type some thing...");
+            // dialog = new ChoiceDialog(dialogData.get(0), dialogData);
+            dialog.setTitle("Search box");
+            dialog.setHeaderText("Type the name to search for the song");
+            dialog.setContentText("Please enter the artist:");
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                for (int i = 0; i < data.size(); i++) {
+                    if (data.get(i).getArtist().contains(result.get())) {
+                        // System.out.println(data.get(i));
+                        // System.out.println(data.get(i).getFilename());
+                        songSearch.add(data.get(i));
+                    }
                 }
+                System.out.println(songSearch);
             }
         });
 
@@ -212,5 +288,9 @@ public class MusicPlayer extends Application {
         public String getFilename() {
             return filename;
         }
+
+        // public String toString() {
+        //     return artist;
+        // }
     }
 }
