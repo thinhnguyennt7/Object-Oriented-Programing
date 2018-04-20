@@ -10,35 +10,24 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
-// import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-// import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-// import javafx.stage.FileChooser;
-// import javafx.scene.text.Font;
-// import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.collections.MapChangeListener;
 import javafx.collections.MapChangeListener.Change;
-
-import java.io.FilenameFilter;
-import java.util.Arrays;
 import java.util.List;
 import java.io.File;
 import java.util.Optional;
-// import java.nio.file.Path;
-// import java.nio.file.Paths;
 
 /**
 * This is the music control player GUI
@@ -47,18 +36,11 @@ import java.util.Optional;
 */
 public class MusicPlayer extends Application {
 
-    /**
-    * The main test for Application
-    * @param args Take in an args
-    */
-    public static void main(String[] args) { launch(args); }
-
     // Initilize the variables
     Button clickPlay, clickPause, clickSearch, clickShow;
     MediaPlayer mediaplayer;
     Media musicFile;
     String theCurrentSong;
-    // BorderPane pane;
     final HBox hb = new HBox();
     boolean isPlaying = false;
     ObservableList<Song> songSearch = FXCollections.observableArrayList();
@@ -68,11 +50,11 @@ public class MusicPlayer extends Application {
 
     @Override
     public void init() {
-        // Check all the files in the folder and get all the file mp3
         File currentDir = new File("").getAbsoluteFile();
         File[] filesList = currentDir.listFiles();
         for (File file : filesList) {
             if (file.isFile() && file.getName().contains(".mp3")) {
+                System.out.println(file.getName());
                 data.add(new Song(file));
             }
         }
@@ -87,16 +69,22 @@ public class MusicPlayer extends Application {
 
         // Create columns for table
         TableColumn fileName = new TableColumn("File Name");
-        fileName.setCellValueFactory(new PropertyValueFactory<Song,String>("filename"));
+        fileName.setCellValueFactory(new PropertyValueFactory<Song, String>("filename"));
         TableColumn attri = new TableColumn("Attributes");
         TableColumn artist = new TableColumn("Artist");
-        artist.setCellValueFactory(new PropertyValueFactory<Song,String>("artist"));
+        artist.setCellValueFactory(new PropertyValueFactory<Song, String>("artist"));
         TableColumn title = new TableColumn("Title");
-        title.setCellValueFactory(new PropertyValueFactory<Song,String>("title"));
+        title.setCellValueFactory(new PropertyValueFactory<Song, String>("title"));
         TableColumn album = new TableColumn("Album");
-        album.setCellValueFactory(new PropertyValueFactory<Song,String>("album"));
-                
+        album.setCellValueFactory(new PropertyValueFactory<Song, String>("album"));
+
         table.setItems(data);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                 refeshTable();
+            }
+        });
         // Add the column to the table
         table.getColumns().addAll(fileName, attri);
         attri.getColumns().addAll(artist, title, album);
@@ -170,10 +158,14 @@ public class MusicPlayer extends Application {
 
         // Functions for each Buttons
         clickPlay.setOnAction(event -> {
-            isPlaying = true;
-            mediaplayer.play();
-            clickPause.setDisable(false);
-            System.out.println("Music is playing!!!");
+            // musicFile = new Media(getClass().getResource("JoshWoodward-Ashes-07-AlreadyThere.mp3").toExternalForm());
+            // mediaplayer = new MediaPlayer(musicFile);
+            if (musicFile != null) {
+                isPlaying = true;
+                mediaplayer.play();
+                System.out.println("Music is playing!!!");
+                clickPause.setDisable(false);
+            }
         });
 
         clickPause.setOnAction(event -> {
@@ -193,7 +185,7 @@ public class MusicPlayer extends Application {
             ObservableList<Choices> choices = FXCollections.observableArrayList(Choices.values());
             ComboBox<Choices> comboBox = new ComboBox<>(choices);
             comboBox.getSelectionModel().selectFirst();
-            dialogPane.setContent(new VBox(8, textField, comboBox));
+            dialogPane.setContent(new VBox(8, comboBox, textField));
             Platform.runLater(textField::requestFocus);
             dialog.setResultConverter((ButtonType button) -> {
                 if (button == ButtonType.OK) {
@@ -203,25 +195,31 @@ public class MusicPlayer extends Application {
             });
 
             Optional<Options> result = dialog.showAndWait();
-            Options valueOut = result.get();
             if (result.isPresent()) {
+                Options valueOut = result.get();
                 clickShow.setDisable(false);
                 System.out.println("Message: " + valueOut.getText());
                 System.out.println("Options: " + valueOut.getChoices().toString());
                 songSearch.clear();
                 for (int i = 0; i < data.size(); i++) {
                     if (valueOut.getChoices().toString().equals("Artist")) {
-                        if (data.get(i).getArtist().contains(valueOut.getText())) {
+                        if (data.get(i).getArtist() == null) {
+                            continue;
+                        } else if (data.get(i).getArtist().toUpperCase().contains(valueOut.getText().toUpperCase())) {
                             System.out.println(data.get(i).getFilename());
                             songSearch.add(data.get(i));
                         }
-                    } else if (valueOut.getChoices().toString().equals("Album")) {
-                        if (data.get(i).getAlbum().contains(valueOut.getText())) {
+                    } else if (valueOut.getChoices().toString().equals("Title")) {
+                        if (data.get(i).getTitle() == null) {
+                            continue;
+                        } else if (data.get(i).getTitle().toUpperCase().contains(valueOut.getText().toUpperCase())) {
                             System.out.println(data.get(i).getFilename());
                             songSearch.add(data.get(i));
                         }
                     } else {
-                        if (data.get(i).getTitle().contains(valueOut.getText())) {
+                        if (data.get(i).getAlbum() == null) {
+                            continue;
+                        } else if (data.get(i).getAlbum().toUpperCase().contains(valueOut.getText().toUpperCase())) {
                             System.out.println(data.get(i).getFilename());
                             songSearch.add(data.get(i));
                         }
@@ -290,8 +288,8 @@ public class MusicPlayer extends Application {
             music.getMetadata().addListener(new MapChangeListener<String, Object>() {
                 @Override
                 public void onChanged(Change<? extends String, ? extends Object> ch) {
+                    filename = (String) file.getName();
                     if (ch.wasAdded()) {
-                        filename = (String) file.getName();
                         if (ch.getKey().equals("artist")) {
                             artist = (String) ch.getValueAdded();
                         } else if (ch.getKey().equals("album")) {
@@ -305,19 +303,37 @@ public class MusicPlayer extends Application {
         }
 
         public String getAlbum() {
-            return album;
+            return this.album;
         }
 
         public String getTitle() {
-            return title;
+            return this.title;
         }
 
         public String getArtist() {
-            return artist;
+            return this.artist;
         }
 
         public String getFilename() {
-            return filename;
+            return this.filename;
         }
     }
+
+    private void refeshTable() {
+        if (table != null) {
+            ObservableList<TableColumn<Song, ?>> columns = table.getColumns();
+            for (TableColumn<Song, ?> column : columns) {
+                if (column.getText().equals("File Name")) {
+                    column.setVisible(false);
+                    column.setVisible(true);
+                }
+            }
+        }
+    }
+
+    /**
+    * The main test for Application
+    * @param args Take in an args
+    */
+    public static void main(String[] args) { launch(args); }
 }
