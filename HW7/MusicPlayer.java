@@ -1,11 +1,15 @@
+import java.io.File;
+import java.util.List;
+import java.util.Optional;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener.Change;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
-import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,7 +17,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -23,11 +26,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.collections.MapChangeListener;
-import javafx.collections.MapChangeListener.Change;
-import java.util.List;
-import java.io.File;
-import java.util.Optional;
 
 /**
 * This is the music control player GUI
@@ -36,17 +34,15 @@ import java.util.Optional;
 */
 public class MusicPlayer extends Application {
 
-    // Initilize the variables
     Button clickPlay, clickPause, clickSearch, clickShow;
-    MediaPlayer mediaplayer;
     Media musicFile;
-    String theCurrentSong;
-    final HBox hb = new HBox();
-    boolean isPlaying = false;
-    ObservableList<Song> songSearch = FXCollections.observableArrayList();
+    MediaPlayer mediaplayer;
     ObservableList<Song> data = FXCollections.observableArrayList();
-    private static enum Choices {Artist, Album, Title}
+    ObservableList<Song> songSearch = FXCollections.observableArrayList();
+    String theCurrentSong;
+    boolean isPlaying = false;
     private TableView<Song> table = new TableView<Song>();
+    private static enum Choices {Artist, Album, Title}
 
     @Override
     public void init() {
@@ -64,63 +60,66 @@ public class MusicPlayer extends Application {
     @Override
     public void start(Stage stage) {
 
-        table.setEditable(true);
-        table.setMinHeight(550);
-
         // Create columns for table
-        TableColumn fileName = new TableColumn("File Name");
-        fileName.setCellValueFactory(new PropertyValueFactory<Song, String>("filename"));
-        TableColumn attri = new TableColumn("Attributes");
-        TableColumn artist = new TableColumn("Artist");
-        artist.setCellValueFactory(new PropertyValueFactory<Song, String>("artist"));
-        TableColumn title = new TableColumn("Title");
-        title.setCellValueFactory(new PropertyValueFactory<Song, String>("title"));
         TableColumn album = new TableColumn("Album");
-        album.setCellValueFactory(new PropertyValueFactory<Song, String>("album"));
+        TableColumn artist = new TableColumn("Artist");
+        TableColumn attri = new TableColumn("Attributes");
+        TableColumn fileName = new TableColumn("File Name");
+        TableColumn title = new TableColumn("Title");
 
-        table.setItems(data);
+        // Set the values for each column depend on the variables
+        album.setCellValueFactory(new PropertyValueFactory<Song, String>("album"));
+        artist.setCellValueFactory(new PropertyValueFactory<Song, String>("artist"));
+        fileName.setCellValueFactory(new PropertyValueFactory<Song, String>("filename"));
+        title.setCellValueFactory(new PropertyValueFactory<Song, String>("title"));
+
+        // Refresh the table
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                  refeshTable();
             }
         });
-        // Add the column to the table
-        table.getColumns().addAll(fileName, attri);
-        attri.getColumns().addAll(artist, title, album);
 
-        // Set the size width of the column
-        fileName.setMinWidth(400);
-        attri.setMinWidth(600);
-        artist.setMinWidth(200);
-        title.setMinWidth(200);
+        // Table styles, size.
         album.setMinWidth(200);
-
-        // Set the column size can't editable
-        fileName.setResizable(false);
-        attri.setResizable(false);
-        artist.setResizable(false);
-        title.setResizable(false);
         album.setResizable(false);
+        artist.setMinWidth(200);
+        artist.setResizable(false);
+        attri.getColumns().addAll(artist, title, album);
+        attri.setMinWidth(600);
+        attri.setResizable(false);
+        fileName.setMinWidth(400);
+        fileName.setResizable(false);
+        table.getColumns().addAll(fileName, attri);
+        table.setEditable(true);
+        table.setMinHeight(550);
+        title.setMinWidth(200);
+        title.setResizable(false);
 
-        // Create Buttons
-        clickPlay = new Button("Play");
+        // Set the value for the table
+        table.setItems(data);
+
+        // Create UI Buttons
         clickPause = new Button("Pause");
         clickPause.setDisable(true);
+        clickPlay = new Button("Play");
         clickSearch = new Button("Search Songs");
         clickShow = new Button("Show all Songs");
         clickShow.setDisable(true);
 
-        // Disable button functionalites
+        // Disable button functionalites if there is no data
         if (data.size() == 0) {
             clickPlay.setDisable(true);
             clickSearch.setDisable(true);
         }
 
+        // Adding components to the Horizontal line
+        final HBox hb = new HBox();
         hb.getChildren().addAll(clickPlay, clickPause, clickSearch, clickShow);
         hb.setSpacing(5);
 
-        // Get data when click on row
+        // Click the row to choose the song to play
         table.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
                 clickPlay.setDisable(false);
@@ -152,11 +151,12 @@ public class MusicPlayer extends Application {
             }
         });
 
+        // If Music is playing then Pause will visible
         if (!isPlaying) {
             clickPause.setDisable(true);
         }
 
-        // Functions for each Buttons
+        // Create the function for each buttons
         clickPlay.setOnAction(event -> {
             // musicFile = new Media(getClass().getResource("JoshWoodward-Ashes-07-AlreadyThere.mp3").toExternalForm());
             // mediaplayer = new MediaPlayer(musicFile);
@@ -234,15 +234,9 @@ public class MusicPlayer extends Application {
             clickShow.setDisable(true);
         });
 
-        // Create horizontal scrol bar
-        ScrollBar scroll = new ScrollBar();
-        scroll.setMin(0);
-        scroll.setMax(100);
-        scroll.setOrientation(Orientation.HORIZONTAL);
-
-        // Vertical Box
+        // Adding components to the Vertical line
         final VBox root = new VBox();
-        root.getChildren().addAll(table, scroll, hb);
+        root.getChildren().addAll(table, hb);
 
         //Creating a scene object 
         Scene scene = new Scene(new Group());
@@ -256,33 +250,58 @@ public class MusicPlayer extends Application {
         stage.show();
     }
 
+    /**
+    *
+    *
+    */
     private static class Options {
         String text;
         Choices choices;
 
+        /**
+        * Options constructor that pass in values for each variables
+        * @param text Take in the search message
+        * @param choices Take in the value of the options choice
+        */
         public Options(String text, Choices choices) {
             this.text = text;
             this.choices = choices;
         }
 
+        /**
+        * Getter method for text
+        * @return String Return the text
+        */
         public String getText() {
             return text;
         }
 
+        /**
+        * Getter method for choices
+        * @return String Return the choices
+        */
         public Choices getChoices() {
             return choices;
         }
     }
 
+    /**
+    * Song class that generate each song
+    */
     public static class Song {
-        private String filename;
-        private String artist;
-        private String title;
-        private String album;
+
         private File file;
         private Media music;
+        private String album;
+        private String artist;
+        private String filename;
+        private String title;
 
-        // Song constructor
+        /**
+        * Song constructor that generate and pass in the values for each variables
+        * @param file Take in a music file
+        *
+        */
         public Song (File file) {
             music = new Media(getClass().getResource(file.getName()).toExternalForm());
             music.getMetadata().addListener(new MapChangeListener<String, Object>() {
@@ -302,29 +321,49 @@ public class MusicPlayer extends Application {
             });
         }
 
+        /**
+        * Getter method for album
+        * @return String return the album value
+        */
         public String getAlbum() {
             return this.album;
         }
 
+        /**
+        * Getter method for title
+        * @return String return the title value
+        */
         public String getTitle() {
             return this.title;
         }
 
+        /**
+        * Getter method for artist
+        * @return String return the album value
+        */
         public String getArtist() {
             return this.artist;
         }
 
+        /**
+        * Getter method for filename
+        * @return String return the filename value
+        */
         public String getFilename() {
             return this.filename;
         }
     }
 
+    /**
+    * Helper method for the refeshTable function
+    * It will check and reappear the column values again
+    */
     private void refeshTable() {
         if (table != null) {
             ObservableList<TableColumn<Song, ?>> columns = table.getColumns();
             for (TableColumn<Song, ?> column : columns) {
                 if (column.getText().equals("File Name")) {
-                    column.setVisible(false);
+                    // column.setVisible(false);
                     column.setVisible(true);
                 }
             }
