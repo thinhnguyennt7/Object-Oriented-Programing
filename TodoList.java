@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 public class TodoList extends Application {
 
-	@Override 
+	@Override
 	public void start(Stage stage) {
 
 		ObservableList<String> todos = FXCollections.observableArrayList();
@@ -22,7 +22,7 @@ public class TodoList extends Application {
 
 		ListView<String> listView = new ListView<String>(todos);
 
-		Button <addButton = new Button("Add");
+		Button addButton = new Button("Add");
 
 		TextField inputField = new TextField();
 
