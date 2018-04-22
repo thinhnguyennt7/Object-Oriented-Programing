@@ -8,7 +8,6 @@ import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-// import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -26,7 +25,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
-* This is the music control player GUI
+* This is the music control player GUI. It will appear the GUI interface.
 * @author tnguyen451
 * @version 1.0
 */
@@ -36,12 +35,12 @@ public class MusicPlayer extends Application {
     private Media musicFile;
     private MediaPlayer mediaplayer;
     private ObservableList<Song> data = FXCollections.observableArrayList();
-    private ObservableList<Song> songSearch = FXCollections.observableArrayList
-        ();
+    private ObservableList<Song> songSearch = FXCollections.observableArrayList(
+        );
     private String theCurrentSong;
     private boolean isPlaying = false;
     private TableView<Song> table = new TableView<Song>();
-    private static enum Choices {Artist, Album, Title, FileName}
+    private static enum Choices { Artist, Album, Title, FileName }
 
     @Override
     public void init() {
@@ -54,10 +53,203 @@ public class MusicPlayer extends Application {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void start(Stage stage) {
 
+        setTableView();
+        table.setItems(data);
+
+        // Create UI Buttons
+        createButtons();
+
+        // Disable button functionalites if there is no data
+        if (data.size() == 0) {
+            clickPlay.setDisable(true);
+            clickSearch.setDisable(true);
+        }
+
+        // Adding components to the Horizontal line
+        final HBox hb = new HBox();
+        hb.getChildren().addAll(clickPlay, clickPause, clickSearch, clickShow);
+        hb.setSpacing(5);
+
+
+        // This method helper will help user to collect the song data for every
+        // single row. Then it will set the song file to the Media and then it
+        // will parse the Media to the Player to make it playable
+        table.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 1) {
+                    clickPlay.setDisable(false);
+                    if (table.getSelectionModel().getSelectedItem() != null) {
+                        Song selectedSong = table.getSelectionModel()
+                            .getSelectedItem();
+                        theCurrentSong = (String) selectedSong.getFilename();
+                        if (theCurrentSong != null) {
+                            musicFile = new Media(getClass().getResource(
+                                theCurrentSong).toExternalForm());
+                            mediaplayer = new MediaPlayer(musicFile);
+                        }
+                    }
+                }
+            });
+
+        // If Music is playing then pause button will visible
+        if (!isPlaying) {
+            clickPause.setDisable(true);
+        }
+
+        // BUTTON FUNCTIONALITIES
+        clickPlay.setOnAction(event -> {
+                play();
+            });
+
+        clickPause.setOnAction(event -> {
+                pause();
+            });
+
+        clickSearch.setOnAction(event -> {
+                searchFunction();
+            });
+
+        clickShow.setOnAction(event -> {
+                table.setItems(data);
+                clickShow.setDisable(true);
+            });
+
+        // Adding components to the Vertical line
+        final VBox root = new VBox();
+        root.getChildren().addAll(table, hb);
+
+        //Creating a scene object
+        Scene scene = new Scene(new Group());
+        stage.setWidth(1000);
+        stage.setHeight(600);
+        ((Group) scene.getRoot()).getChildren().addAll(root);
+
+        // Main stage setting
+        stage.setTitle("Music Player");
+        stage.setScene(scene);
+        table.refresh();
+        stage.show();
+    }
+
+    private void createButtons() {
+        clickPause = new Button("Pause");
+        clickPause.setDisable(true);
+        clickPlay = new Button("Play");
+        clickSearch = new Button("Search Songs");
+        clickShow = new Button("Show all Songs");
+        clickShow.setDisable(true);
+    }
+
+    /**
+     * This method helper generate the pause button
+     */
+    private void pause() {
+        isPlaying = false;
+        clickPause.setDisable(true);
+        mediaplayer.pause();
+        System.out.println("Music is pausing!!!");
+    }
+
+    /**
+     * This method helper generate the play button
+     */
+    private void play() {
+        if (musicFile != null) {
+            isPlaying = true;
+            mediaplayer.setStartTime(Duration.seconds(0));
+            mediaplayer.play();
+            System.out.println("Music is playing!!!");
+            clickPause.setDisable(false);
+        }
+    }
+
+    /**
+     * This method helper generete the search functions
+     * It will search for any song title, song artist, album.
+     * Then it will display the the table view the result any song that have
+     * the same keywords that match
+     * Otherwise it will return the table with an empty include the message
+     */
+    private void searchFunction() {
+        Dialog<Options> dialog = new Dialog<>();
+        dialog.setTitle("Search for Song");
+        dialog.setHeaderText("Please choose and type");
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        TextField textField = new TextField("Keyword...");
+        ObservableList<Choices> choices = FXCollections
+            .observableArrayList(Choices.values());
+        ComboBox<Choices> comboBox = new ComboBox<>(choices);
+        comboBox.getSelectionModel().selectFirst();
+        dialogPane.setContent(new VBox(8, comboBox, textField));
+        Platform.runLater(textField::requestFocus);
+        dialog.setResultConverter((ButtonType button) -> {
+                if (button == ButtonType.OK) {
+                    return new Options(textField.getText(),
+                        comboBox.getValue());
+                }
+                return null;
+            });
+        Optional<Options> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            Options valueOut = result.get();
+            clickShow.setDisable(false);
+            songSearch.clear();
+            if (valueOut.getText().equals("")) {
+                clickShow.setDisable(true);
+            } else {
+                for (int i = 0; i < data.size(); i++) {
+                    if (valueOut.getChoices().toString()
+                            .equals("Artist")) {
+                        if (data.get(i).getArtist() == null) {
+                            continue;
+                        } else if (data.get(i).getArtist().toUpperCase()
+                            .contains(valueOut.getText()
+                                .toUpperCase())) {
+                            songSearch.add(data.get(i));
+                        }
+                    } else if (valueOut.getChoices().toString()
+                        .equals("Title")) {
+                        if (data.get(i).getTitle() == null) {
+                            continue;
+                        } else if (data.get(i).getTitle().toUpperCase()
+                            .contains(valueOut.getText()
+                                .toUpperCase())) {
+                            songSearch.add(data.get(i));
+                        }
+                    } else if (valueOut.getChoices().toString()
+                        .equals("Album")) {
+                        if (data.get(i).getAlbum() == null) {
+                            continue;
+                        } else if (data.get(i).getAlbum().toUpperCase()
+                            .contains(valueOut.getText()
+                                .toUpperCase())) {
+                            songSearch.add(data.get(i));
+                        }
+                    } else {
+                        if (data.get(i).getFilename() == null) {
+                            continue;
+                        } else if (data.get(i).getFilename()
+                                .toUpperCase().contains(valueOut
+                                .getText().toUpperCase())) {
+                            songSearch.add(data.get(i));
+                        }
+                    }
+                }
+                table.setItems(songSearch);
+            }
+        }
+    }
+
+    /**
+     * This method helper is generate and creating the basic type of table view
+     * Also it taking action to set the values to the table
+     * The values are the album, the artist, the filename and the title
+     */
+    @SuppressWarnings("unchecked")
+    private void setTableView() {
         // Create columns for table
         TableColumn<Song, String> album = new TableColumn("Album");
         TableColumn<Song, String> artist = new TableColumn("Artist");
@@ -79,7 +271,7 @@ public class MusicPlayer extends Application {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                 refeshTable();
+                refeshTable();
             }
         });
 
@@ -98,183 +290,16 @@ public class MusicPlayer extends Application {
         table.setMinHeight(550);
         title.setMinWidth(200);
         title.setResizable(false);
-
-        // Set the value for the table
-        table.setItems(data);
-
-        // Create UI Buttons
-        clickPause = new Button("Pause");
-        clickPause.setDisable(true);
-        clickPlay = new Button("Play");
-        clickSearch = new Button("Search Songs");
-        clickShow = new Button("Show all Songs");
-        clickShow.setDisable(true);
-
-        // Disable button functionalites if there is no data
-        if (data.size() == 0) {
-            clickPlay.setDisable(true);
-            clickSearch.setDisable(true);
-        }
-
-        // Adding components to the Horizontal line
-        final HBox hb = new HBox();
-        hb.getChildren().addAll(clickPlay, clickPause, clickSearch, clickShow);
-        hb.setSpacing(5);
-
-        // Click the row to choose the song to play
-        table.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 1) {
-                clickPlay.setDisable(false);
-                if (table.getSelectionModel().getSelectedItem() != null) {
-                    Song selectedSong = table.getSelectionModel()
-                    .getSelectedItem();
-                    theCurrentSong = (String) selectedSong.getFilename();
-                    if (theCurrentSong != null) {
-                        musicFile = new Media(getClass().getResource(
-                            theCurrentSong).toExternalForm());
-                        mediaplayer = new MediaPlayer(musicFile);
-                    }
-                }
-            } else if (event.getClickCount() == 2) {
-                if (isPlaying == true || isPlaying == false) {
-                    mediaplayer.stop();
-                    if (table.getSelectionModel().getSelectedItem() != null) {
-                        Song selectedSong = table.getSelectionModel()
-                        .getSelectedItem();
-                        theCurrentSong = (String) selectedSong.getFilename();
-                        if (theCurrentSong != null) {
-                            musicFile = new Media(getClass().getResource(
-                                theCurrentSong).toExternalForm());
-                            mediaplayer = new MediaPlayer(musicFile);
-                            mediaplayer.play();
-                            clickPause.setDisable(false);
-                            isPlaying = true;
-                        }
-                    }
-                }
-            }
-        });
-
-        // If Music is playing then Pause will visible
-        if (!isPlaying) {
-            clickPause.setDisable(true);
-        }
-
-        // Create the function for each buttons
-        clickPlay.setOnAction(event -> {
-            if (musicFile != null) {
-                isPlaying = true;
-                mediaplayer.setStartTime(Duration.seconds(0));
-                mediaplayer.play();
-                System.out.println("Music is playing!!!");
-                clickPause.setDisable(false);
-            }
-        });
-
-        clickPause.setOnAction(event -> {
-            isPlaying = false;
-            clickPause.setDisable(true);
-            mediaplayer.pause();
-            System.out.println("Music is pausing!!!");
-        });
-
-        clickSearch.setOnAction(event -> {
-            Dialog<Options> dialog = new Dialog<>();
-            dialog.setTitle("Search for Song");
-            dialog.setHeaderText("Please choose and type");
-            DialogPane dialogPane = dialog.getDialogPane();
-            dialogPane.getButtonTypes().addAll(ButtonType.OK,
-                ButtonType.CANCEL);
-            TextField textField = new TextField("Keyword...");
-            ObservableList<Choices> choices = FXCollections.observableArrayList(
-                Choices.values());
-            ComboBox<Choices> comboBox = new ComboBox<>(choices);
-            comboBox.getSelectionModel().selectFirst();
-            dialogPane.setContent(new VBox(8, comboBox, textField));
-            Platform.runLater(textField::requestFocus);
-            dialog.setResultConverter((ButtonType button) -> {
-                if (button == ButtonType.OK) {
-                    return new Options(textField.getText(), comboBox.getValue()
-                        );
-                }
-                return null;
-            });
-
-            Optional<Options> result = dialog.showAndWait();
-            if (result.isPresent()) {
-                Options valueOut = result.get();
-                clickShow.setDisable(false);
-                songSearch.clear();
-                if (valueOut.getText().equals("")) {
-                    clickShow.setDisable(true);
-                } else {
-                    for (int i = 0; i < data.size(); i++) {
-                        if (valueOut.getChoices().toString().equals("Artist")) {
-                            if (data.get(i).getArtist() == null) {
-                                continue;
-                            } else if (data.get(i).getArtist().toUpperCase()
-                                .contains(valueOut.getText().toUpperCase())) {
-                                songSearch.add(data.get(i));
-                            }
-                        } else if (valueOut.getChoices().toString().equals("Title"))
-                        {
-                            if (data.get(i).getTitle() == null) {
-                                continue;
-                            } else if (data.get(i).getTitle().toUpperCase()
-                                .contains(valueOut.getText().toUpperCase())) {
-                                songSearch.add(data.get(i));
-                            }
-                        } else if (valueOut.getChoices().toString().equals("Album"))
-                        {
-                            if (data.get(i).getAlbum() == null) {
-                                continue;
-                            } else if (data.get(i).getAlbum().toUpperCase()
-                                .contains(valueOut.getText().toUpperCase())) {
-                                songSearch.add(data.get(i));
-                            }
-                        } else {
-                            if (data.get(i).getFilename() == null) {
-                                continue;
-                            } else if (data.get(i).getFilename().toUpperCase()
-                                .contains(valueOut.getText().toUpperCase())) {
-                                songSearch.add(data.get(i));
-                            }
-                        }
-                    }
-                    table.setItems(songSearch);
-                }
-            }
-        });
-
-        clickShow.setOnAction(event -> {
-            table.setItems(data);
-            clickShow.setDisable(true);
-        });
-
-        // Adding components to the Vertical line
-        final VBox root = new VBox();
-        root.getChildren().addAll(table, hb);
-
-        //Creating a scene object
-        Scene scene = new Scene(new Group());
-        stage.setWidth(1000);
-        stage.setHeight(600);
-        ((Group) scene.getRoot()).getChildren().addAll(root);
-
-        // Main stage
-        stage.setTitle("Music Player");
-        stage.setScene(scene);
-        table.refresh();
-        stage.show();
     }
 
     /**
-    * Options function that help to select the choice
-    *
+    * Options function that help to select the choices from the magic enum
+    * This options choice has two getter methods that help user to be able to
+    * get the data of the choices
     */
     private static class Options {
-        String text;
-        Choices choices;
+        private String text;
+        private Choices choices;
 
         /**
         * Options constructor that pass in values for each variables
@@ -305,6 +330,8 @@ public class MusicPlayer extends Application {
 
     /**
     * Song class that generate each song
+    * This class will get the data for the song such as the filename, the title,
+    * the album, the artist
     */
     public static class Song {
 
@@ -317,10 +344,11 @@ public class MusicPlayer extends Application {
 
         /**
         * Song constructor that generate of the values for each variables
+        * It will take in the song file in the current directory and then
+        * generate the song to parse the basic metadata to the instance vars
         * @param file Take in a music file
-        *
         */
-        public Song (File file) {
+        public Song(File file) {
             music = new Media(getClass().getResource(file.getName()
                 ).toExternalForm());
             music.getMetadata().addListener(new MapChangeListener<String,
@@ -377,7 +405,8 @@ public class MusicPlayer extends Application {
 
     /**
     * Helper method for the refeshTable function
-    * It will check and reappear the column values again
+    * It will go to every single line in the table and turn the visible off and
+    * on to refresh it again.
     */
     private void refeshTable() {
         if (table != null) {
@@ -395,5 +424,7 @@ public class MusicPlayer extends Application {
     * The main test for Application
     * @param args Take in an args
     */
-    public static void main(String[] args) { launch(args); }
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
