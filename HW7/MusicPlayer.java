@@ -26,7 +26,7 @@ import javafx.util.Duration;
 
 /**
 * This is the music control player GUI. It will appear the GUI interface.
-* @author tnguyen451
+* @author tnguyen452
 * @version 1.0
 */
 public class MusicPlayer extends Application {
